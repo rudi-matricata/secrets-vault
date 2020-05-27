@@ -25,7 +25,7 @@
               <archive>
                 <manifest>
                   <mainClass>
-                    com.secrets.vault.ApplicationMain
+                    com.secrets.vault.SecretsVaultMain
                   </mainClass>
                 </manifest>
               </archive>
