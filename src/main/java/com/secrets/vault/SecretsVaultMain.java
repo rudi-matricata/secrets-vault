@@ -3,13 +3,17 @@
  */
 package com.secrets.vault;
 
+import java.io.IOException;
+
+import com.secrets.vault.shell.ShellProcessor;
+
 /**
  * @author Filipov, Radoslav
  */
 public class SecretsVaultMain {
 
-  public static void main(String[] args) {
-    // TODO: Handle commands and arguments properly
+  public static void main(String[] args) throws IOException {
+    ShellProcessor.process();
   }
 
 }

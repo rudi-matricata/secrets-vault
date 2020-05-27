@@ -3,13 +3,24 @@
  */
 package com.secrets.vault.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author Filipov, Radoslav
  */
 public class Secret {
 
+  @JsonIgnore
   private String name;
   private String value;
+
+  public Secret() {
+  }
+
+  public Secret(String name, String value) {
+    this.name = name;
+    this.value = value;
+  }
 
   public String getName() {
     return name;
