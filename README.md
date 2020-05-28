@@ -27,3 +27,7 @@ The flow in this scenario is as follows:
 5. SHA-256 hash of the key from 4. is compared against the one that is saved in the corresponding file. If this check does NOT pass - fail. Otherwise:
 6. Decrypt the secret using the key from 4. and print it in the console.
 
+- Steps 1 to 3 should be made by the user
+
+### Example
+![Example Secrets Vault Usage](doc/secrets-vault-demo.PNG)
