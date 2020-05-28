@@ -40,6 +40,9 @@ public class FileReadEvent implements FileEvent {
     this.masterPasswordValidator = new MasterPasswordValidator();
   }
 
+  /**
+   * Should be called on request for reading a file.
+   */
   @Override
   public void onEvent(File fileSubject) throws IOException {
     if (!fileSubject.exists()) {

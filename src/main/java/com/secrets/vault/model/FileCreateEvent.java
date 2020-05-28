@@ -43,7 +43,7 @@ public class FileCreateEvent implements FileEvent {
   }
 
   /**
-   * Should be called on new file secret creation. Checks if the file exists (doesn't overwrite it).
+   * Should be called on new file secret creation. First checks if the file exists (doesn't overwrite it).
    */
   @Override
   public void onEvent(File fileSubject) throws IOException {
