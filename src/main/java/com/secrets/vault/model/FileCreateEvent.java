@@ -13,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Base64;
+import java.util.Date;
 import java.util.Scanner;
 
 import javax.crypto.BadPaddingException;
@@ -58,6 +59,7 @@ public class FileCreateEvent implements FileEvent {
       FileSecret fileSecret = new FileSecret(fileSubject.getName(), secretsEncryptor.encrypt(secret.getBytes(StandardCharsets.UTF_8)));
       fileSecret.setIv(getBase64EncodedIV());
       fileSecret.setUser(SecretsVaultUtils.CURRENT_USER);
+      fileSecret.setCreatedAt(new Date());
       SecretsVaultUtils.getObjectMapper().writeValue(fileSubject, fileSecret);
 
       out.println("File successfully created");
