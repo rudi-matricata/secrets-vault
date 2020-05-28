@@ -3,6 +3,8 @@
  */
 package com.secrets.vault.model;
 
+import com.secrets.vault.shell.ShellCommand;
+
 /**
  * @author Filipov, Radoslav
  */

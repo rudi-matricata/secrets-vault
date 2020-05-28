@@ -3,7 +3,7 @@
  */
 package com.secrets.vault.shell;
 
-import static com.secrets.vault.model.ShellCommand.fromValue;
+import static com.secrets.vault.shell.ShellCommand.fromValue;
 import static java.lang.System.out;
 
 import java.io.File;
@@ -14,7 +14,6 @@ import java.util.Set;
 
 import com.secrets.vault.SecretsVaultUtils;
 import com.secrets.vault.model.FileEventFactory;
-import com.secrets.vault.model.ShellCommand;
 import com.secrets.vault.validation.NonBlankInputValidator;
 
 /**

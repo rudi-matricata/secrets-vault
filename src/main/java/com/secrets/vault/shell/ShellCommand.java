@@ -1,7 +1,7 @@
 /**
  * Created on May 27, 2020 by Radoslav Filipov
  */
-package com.secrets.vault.model;
+package com.secrets.vault.shell;
 
 /**
  * @author Filipov, Radoslav
