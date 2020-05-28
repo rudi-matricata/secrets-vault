@@ -17,6 +17,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.secrets.vault.SecretsVaultUtils;
 import com.secrets.vault.crypto.SecretsDecryptor;
 import com.secrets.vault.exception.CryptoRuntimeException;
@@ -66,7 +67,13 @@ public class FileReadEvent implements FileEvent {
     } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException e) {
       throw new CryptoRuntimeException("Error occured while trying to decrypt the secret", e);
     }
-    out.println(getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(secretRead));
+    printJsonOutput(secretRead);
+  }
+
+  private void printJsonOutput(FileSecret fileSecret) throws JsonProcessingException {
+    String jsonOutput = getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(fileSecret);
+    jsonOutput = "\n\t" + jsonOutput.replace("\n", "\n\t");
+    out.println(jsonOutput);
   }
 
   private void clearFields(FileSecret fileSecret) {
