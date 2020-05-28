@@ -13,6 +13,7 @@ public class Secret {
   @JsonIgnore
   private String name;
   private String value;
+  private String iv;
 
   public Secret() {
   }
@@ -36,6 +37,14 @@ public class Secret {
 
   public void setValue(String value) {
     this.value = value;
+  }
+
+  public String getIv() {
+    return iv;
+  }
+
+  public void setIv(String iv) {
+    this.iv = iv;
   }
 
 }
