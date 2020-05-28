@@ -3,7 +3,6 @@
  */
 package com.secrets.vault.model;
 
-import static com.secrets.vault.SecretsVaultUtils.CURRENT_USER;
 import static com.secrets.vault.SecretsVaultUtils.OUTPUT_PATTERN;
 import static com.secrets.vault.SecretsVaultUtils.getObjectMapper;
 import static java.lang.System.out;
@@ -23,6 +22,7 @@ import javax.crypto.NoSuchPaddingException;
 import com.secrets.vault.SecretsVaultUtils;
 import com.secrets.vault.crypto.SecretsDecryptor;
 import com.secrets.vault.exception.CryptoRuntimeException;
+import com.secrets.vault.exception.IllegalFileAccessException;
 
 /**
  * @author Filipov, Radoslav
@@ -47,10 +47,10 @@ public class FileReadEvent implements FileEvent {
 
     Secret secretRead = getObjectMapper().readValue(fileSubject, Secret.class);
     if (!SecretsVaultUtils.CURRENT_USER.equals(secretRead.getUser())) {
-      throw new RuntimeException("Illegal access to file. The file requested to be read belongs to: " + secretRead.getUser());
+      throw new IllegalFileAccessException("Illegal access to file. The file requested to be read belongs to: " + secretRead.getUser());
     }
     try {
-      out.print(format(OUTPUT_PATTERN, CURRENT_USER, "password"));
+      out.print(format(OUTPUT_PATTERN, "password"));
       secretsDecryptor.init(SecretsVaultUtils.getScanner().next(), Base64.getDecoder().decode(secretRead.getIv()));
 
       secretRead.setValue(secretsDecryptor.decrypt(Base64.getDecoder().decode(secretRead.getValue())));

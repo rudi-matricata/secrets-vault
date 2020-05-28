@@ -47,10 +47,10 @@ public class FileCreateEvent implements FileEvent {
       throw new IllegalStateException("Requested file already exists: " + fileSubject.getName());
     }
     try {
-      out.print(format(OUTPUT_PATTERN, CURRENT_USER, "password"));
+      out.print(format(OUTPUT_PATTERN, "password"));
       secretsEncryptor.init(SecretsVaultUtils.getScanner().next());
 
-      out.print(format(OUTPUT_PATTERN, CURRENT_USER, "secret value"));
+      out.print(format(OUTPUT_PATTERN, "secret value"));
       String secret = SecretsVaultUtils.getScanner().next();
 
       Secret secretObj = new Secret(fileSubject.getName(), secretsEncryptor.encrypt(secret.getBytes(StandardCharsets.UTF_8)));

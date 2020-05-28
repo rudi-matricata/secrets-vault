@@ -17,7 +17,7 @@ public final class SecretsVaultUtils {
   }
 
   public static final String CURRENT_USER = System.getProperty("user.name");
-  public static final String OUTPUT_PATTERN = "[{0}] {1}: ";
+  public static final String OUTPUT_PATTERN = "[" + CURRENT_USER + "] {0}: ";
 
   private static ObjectMapper objectMapper;
   private static Scanner scanner;

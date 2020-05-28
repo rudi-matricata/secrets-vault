@@ -3,7 +3,6 @@
  */
 package com.secrets.vault.shell;
 
-import static com.secrets.vault.SecretsVaultUtils.CURRENT_USER;
 import static com.secrets.vault.SecretsVaultUtils.OUTPUT_PATTERN;
 import static java.lang.System.out;
 import static java.text.MessageFormat.format;
@@ -28,17 +27,17 @@ public final class ShellProcessor {
   }
 
   public static void processInput() throws IOException {
-    out.print(format(OUTPUT_PATTERN, CURRENT_USER, "command"));
+    out.print(format(OUTPUT_PATTERN, "command"));
 
     Scanner scanner = SecretsVaultUtils.getScanner();
     String command = scanner.next();
     while (!"exit".equals(command)) {
-      out.print(format(OUTPUT_PATTERN, CURRENT_USER, "filename"));
+      out.print(format(OUTPUT_PATTERN, "filename"));
       File fileSubject = new File(scanner.next());
 
       FileEventFactory.getFileEvent(FileShellCommand.fromValue(command)).onEvent(fileSubject);
 
-      out.print("\n" + format(OUTPUT_PATTERN, CURRENT_USER, "command"));
+      out.print("\n" + format(OUTPUT_PATTERN, "command"));
       command = scanner.next();
     }
     scanner.close();
