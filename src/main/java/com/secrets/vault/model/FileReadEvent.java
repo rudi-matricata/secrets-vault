@@ -66,7 +66,7 @@ public class FileReadEvent implements FileEvent {
     } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException e) {
       throw new CryptoRuntimeException("Error occured while trying to decrypt the secret", e);
     }
-    out.print(getObjectMapper().writeValueAsString(secretRead) + "\n");
+    out.println(getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(secretRead));
   }
 
   private void clearFields(FileSecret fileSecret) {
