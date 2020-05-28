@@ -5,13 +5,13 @@ package com.secrets.vault.model;
 
 import static com.secrets.vault.SecretsVaultUtils.getObjectMapper;
 import static java.lang.System.out;
+import static java.util.Base64.getDecoder;
 
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -49,14 +49,16 @@ public class FileReadEvent implements FileEvent {
     }
     try {
       out.print("\tmaster password used for file encryption: ");
-      secretsDecryptor.init(SecretsVaultUtils.getScanner().next(), Base64.getDecoder().decode(secretRead.getIv()));
+      secretsDecryptor.init(SecretsVaultUtils.getScanner().next(), getDecoder().decode(secretRead.getIv()));
 
-      secretRead.setValue(secretsDecryptor.decrypt(Base64.getDecoder().decode(secretRead.getValue())));
+      secretRead.setValue(secretsDecryptor.decrypt(getDecoder().decode(secretRead.getValue())));
+      secretRead.setIv(null);
+      secretRead.setUser(null);
     } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-      throw new CryptoRuntimeException("Fail", e);
+      throw new CryptoRuntimeException("Error occured while trying to decrypt the secret", e);
     }
 
-    out.print(getObjectMapper().writeValueAsString(secretRead));
+    out.print(getObjectMapper().writeValueAsString(secretRead) + "\n");
   }
 
 }

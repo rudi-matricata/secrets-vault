@@ -4,10 +4,13 @@
 package com.secrets.vault.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * @author Filipov, Radoslav
  */
+@JsonInclude(Include.NON_EMPTY)
 public class FileSecret {
 
   @JsonIgnore
