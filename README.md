@@ -7,8 +7,7 @@ Secrets Vault enables you to store secrets/credentials securely on your file sys
 The flow in this scenario is as follows:
 
 1. Specify 'create' command.
-2. Type a filename. (could not be blank)
-  - if there is already a file with the given name - fail
+2. Type a filename. (could not be blank) - if there is already a file with the given name - fail
 3. Type the secret you want to be protected.
 4. Type the master password that is used for protection.
 5. An AES data encryption key is generated using the PBKDF2 generation function with HMAC-SHA256.
@@ -16,4 +15,15 @@ The flow in this scenario is as follows:
 7. A file with the specifed in 2. name is created and the encrypted value (alongside with the IV and the provided master password hash (SHA-256)) is written.
 
 - Steps 1 to 4 should be made by the user
+
+### Reading a secret
+
+The flow in this scenario is as follows:
+
+1. Specify 'read' command
+2. Type a filename. (could not be blank) - if there is NO file with the given name - fail
+3. Type the master password that is protecting this secret.
+4. An AES decryption key is generated using the PBKDF2 generation function with HMAC-SHA256.
+5. SHA-256 hash of the key from 4. is compared against the one that is saved in the corresponding file. If this check does NOT pass - fail. Otherwise:
+6. Decrypt the secret using the key from 4. and print it in the console.
 
