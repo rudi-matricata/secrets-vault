@@ -13,7 +13,7 @@ import com.secrets.vault.shell.ShellProcessor;
 public class SecretsVaultMain {
 
   public static void main(String[] args) throws IOException {
-    ShellProcessor.process();
+    ShellProcessor.processInput();
   }
 
 }

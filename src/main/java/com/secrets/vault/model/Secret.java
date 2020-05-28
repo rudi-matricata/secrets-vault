@@ -14,6 +14,7 @@ public class Secret {
   private String name;
   private String value;
   private String iv;
+  private String user;
 
   public Secret() {
   }
@@ -45,6 +46,14 @@ public class Secret {
 
   public void setIv(String iv) {
     this.iv = iv;
+  }
+
+  public String getUser() {
+    return user;
+  }
+
+  public void setUser(String user) {
+    this.user = user;
   }
 
 }

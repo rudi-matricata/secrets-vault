@@ -56,6 +56,7 @@ public class FileCreateEvent implements FileEvent {
       Secret secretObj = new Secret(fileSubject.getName(), secretsEncryptor.encrypt(secret.getBytes(StandardCharsets.UTF_8)));
       secretObj
           .setIv(Base64.getEncoder().encodeToString(secretsEncryptor.getCipher().getParameters().getParameterSpec(IvParameterSpec.class).getIV()));
+      secretObj.setUser(SecretsVaultUtils.CURRENT_USER);
       SecretsVaultUtils.getObjectMapper().writeValue(fileSubject, secretObj);
     } catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | IllegalBlockSizeException | BadPaddingException
         | InvalidParameterSpecException e) {

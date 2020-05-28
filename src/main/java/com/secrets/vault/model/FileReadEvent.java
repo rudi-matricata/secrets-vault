@@ -46,6 +46,9 @@ public class FileReadEvent implements FileEvent {
     }
 
     Secret secretRead = getObjectMapper().readValue(fileSubject, Secret.class);
+    if (!SecretsVaultUtils.CURRENT_USER.equals(secretRead.getUser())) {
+      throw new RuntimeException("Illegal access to file. The file requested to be read belongs to: " + secretRead.getUser());
+    }
     try {
       out.print(format(OUTPUT_PATTERN, CURRENT_USER, "password"));
       secretsDecryptor.init(SecretsVaultUtils.getScanner().next(), Base64.getDecoder().decode(secretRead.getIv()));

@@ -17,6 +17,8 @@ import com.secrets.vault.model.FileEventFactory;
 import com.secrets.vault.model.FileShellCommand;
 
 /**
+ * The class is used to process input coming from the {@link System#in}
+ *
  * @author Filipov, Radoslav
  */
 public final class ShellProcessor {
@@ -25,7 +27,7 @@ public final class ShellProcessor {
     // this class should not be instantiated
   }
 
-  public static void process() throws IOException {
+  public static void processInput() throws IOException {
     out.print(format(OUTPUT_PATTERN, CURRENT_USER, "command"));
 
     Scanner scanner = SecretsVaultUtils.getScanner();
