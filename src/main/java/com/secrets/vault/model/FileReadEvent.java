@@ -3,10 +3,8 @@
  */
 package com.secrets.vault.model;
 
-import static com.secrets.vault.SecretsVaultUtils.OUTPUT_PATTERN;
 import static com.secrets.vault.SecretsVaultUtils.getObjectMapper;
 import static java.lang.System.out;
-import static java.text.MessageFormat.format;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,12 +43,12 @@ public class FileReadEvent implements FileEvent {
       throw new IllegalStateException("Requested file for reading does NOT exist: " + fileSubject.getName());
     }
 
-    Secret secretRead = getObjectMapper().readValue(fileSubject, Secret.class);
+    FileSecret secretRead = getObjectMapper().readValue(fileSubject, FileSecret.class);
     if (!SecretsVaultUtils.CURRENT_USER.equals(secretRead.getUser())) {
       throw new IllegalFileAccessException("Illegal access to file. The file requested to be read belongs to: " + secretRead.getUser());
     }
     try {
-      out.print(format(OUTPUT_PATTERN, "password"));
+      out.print("\tmaster password used for file encryption: ");
       secretsDecryptor.init(SecretsVaultUtils.getScanner().next(), Base64.getDecoder().decode(secretRead.getIv()));
 
       secretRead.setValue(secretsDecryptor.decrypt(Base64.getDecoder().decode(secretRead.getValue())));

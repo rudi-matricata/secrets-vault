@@ -15,6 +15,8 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
+ * Base class that holds #Cipher and #Key
+ *
  * @author Filipov, Radoslav
  */
 public abstract class CryptoProvider {
@@ -29,17 +31,31 @@ public abstract class CryptoProvider {
     this.cipher = Cipher.getInstance(CRYPTO_ALGORITHM);
   }
 
+  /**
+   * Derives an AES key and sets it.
+   *
+   * @param password
+   *          Password secret used for AES key derivation.
+   * @throws NoSuchAlgorithmException
+   * @throws InvalidKeySpecException
+   */
   protected void setSecretKey(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
-    int iterations = 1000;
+    final int iterations = 1000;
+    final int keyLength = 256;
     char[] chars = password.toCharArray();
     byte[] salt = getSalt();
 
-    PBEKeySpec spec = new PBEKeySpec(chars, salt, iterations, 256);
+    PBEKeySpec spec = new PBEKeySpec(chars, salt, iterations, keyLength);
     SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_DERIVATION_ALGORITHM);
+
     this.secretKey = new SecretKeySpec(keyFactory.generateSecret(spec).getEncoded(), "AES");
   }
 
-  // change it not to be hardcoded
+  /**
+   * Generates salt used in key generation. Currently it is a hardcoded one.
+   *
+   * @return salt value
+   */
   private static byte[] getSalt() {
     return "abcdefghijklmnop".getBytes(StandardCharsets.UTF_8);
   }

@@ -3,10 +3,7 @@
  */
 package com.secrets.vault.model;
 
-import static com.secrets.vault.SecretsVaultUtils.CURRENT_USER;
-import static com.secrets.vault.SecretsVaultUtils.OUTPUT_PATTERN;
 import static java.lang.System.out;
-import static java.text.MessageFormat.format;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Base64;
+import java.util.Scanner;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -41,28 +39,37 @@ public class FileCreateEvent implements FileEvent {
     }
   }
 
+  /**
+   * Should be called on new file secret creation. Checks if the file exists (doesn't overwrite it).
+   */
   @Override
   public void onEvent(File fileSubject) throws IOException {
     if (fileSubject.exists()) {
       throw new IllegalStateException("Requested file already exists: " + fileSubject.getName());
     }
     try {
-      out.print(format(OUTPUT_PATTERN, "password"));
-      secretsEncryptor.init(SecretsVaultUtils.getScanner().next());
+      Scanner scanner = SecretsVaultUtils.getScanner();
+      out.print("\tsecret value: ");
+      String secret = scanner.next();
 
-      out.print(format(OUTPUT_PATTERN, "secret value"));
-      String secret = SecretsVaultUtils.getScanner().next();
+      out.print("\tmaster password to secure the file: ");
+      String masterPassword = scanner.next();
+      secretsEncryptor.init(masterPassword);
 
-      Secret secretObj = new Secret(fileSubject.getName(), secretsEncryptor.encrypt(secret.getBytes(StandardCharsets.UTF_8)));
-      secretObj
-          .setIv(Base64.getEncoder().encodeToString(secretsEncryptor.getCipher().getParameters().getParameterSpec(IvParameterSpec.class).getIV()));
-      secretObj.setUser(SecretsVaultUtils.CURRENT_USER);
-      SecretsVaultUtils.getObjectMapper().writeValue(fileSubject, secretObj);
+      FileSecret fileSecret = new FileSecret(fileSubject.getName(), secretsEncryptor.encrypt(secret.getBytes(StandardCharsets.UTF_8)));
+      fileSecret.setIv(getBase64EncodedIV());
+      fileSecret.setUser(SecretsVaultUtils.CURRENT_USER);
+      SecretsVaultUtils.getObjectMapper().writeValue(fileSubject, fileSecret);
+
+      out.println("File successfully created");
     } catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | IllegalBlockSizeException | BadPaddingException
         | InvalidParameterSpecException e) {
-      throw new CryptoRuntimeException("Fail", e);
+      throw new CryptoRuntimeException("Error occured while trying to encrypt the provided secret", e);
     }
+  }
 
+  private String getBase64EncodedIV() throws InvalidParameterSpecException {
+    return Base64.getEncoder().encodeToString(secretsEncryptor.getCipher().getParameters().getParameterSpec(IvParameterSpec.class).getIV());
   }
 
 }

@@ -18,6 +18,8 @@ import javax.crypto.spec.IvParameterSpec;
 import com.secrets.vault.exception.CryptoRuntimeException;
 
 /**
+ * Class used for AES decryption. Currently CBC mode with PKCS5Padding is used.
+ *
  * @author Filipov, Radoslav
  */
 public class SecretsDecryptor extends CryptoProvider {
@@ -26,15 +28,34 @@ public class SecretsDecryptor extends CryptoProvider {
     super();
   }
 
+  /**
+   * Initializes the cipher in decryption mode, with key derived from the provided password using
+   * PBKDF2WithHmacSHA256 algorithm and the given IV.
+   *
+   * @param password
+   * @param iv
+   * @throws NoSuchAlgorithmException
+   * @throws InvalidKeySpecException
+   * @throws InvalidKeyException
+   */
   public void init(String password, byte[] iv) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
     setSecretKey(password);
     try {
       this.cipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
     } catch (InvalidAlgorithmParameterException e) {
-      throw new CryptoRuntimeException("Fail", e);
+      throw new CryptoRuntimeException("Invalid IV parameter provided", e);
     }
   }
 
+  /**
+   * Performs decryption.
+   *
+   * @param ciphertext
+   *          Ciphertext to be decrypted.
+   * @return Base64 encoded plaintext that corresponds to the given ciphertext.
+   * @throws IllegalBlockSizeException
+   * @throws BadPaddingException
+   */
   public String decrypt(byte[] ciphertext) throws IllegalBlockSizeException, BadPaddingException {
     return new String(cipher.doFinal(ciphertext), StandardCharsets.UTF_8);
   }

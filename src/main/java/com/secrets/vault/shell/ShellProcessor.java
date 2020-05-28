@@ -3,13 +3,12 @@
  */
 package com.secrets.vault.shell;
 
-import static com.secrets.vault.SecretsVaultUtils.OUTPUT_PATTERN;
 import static java.lang.System.out;
-import static java.text.MessageFormat.format;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.Set;
 
 import com.secrets.vault.SecretsVaultUtils;
 import com.secrets.vault.model.FileEventFactory;
@@ -22,22 +21,30 @@ import com.secrets.vault.model.FileShellCommand;
  */
 public final class ShellProcessor {
 
+  private static final Set<String> TERMINATION_COMMANDS = Set.of("exit", "quit", "q");
+
   private ShellProcessor() {
     // this class should not be instantiated
   }
 
+  /**
+   * Processes the given input until termination command is given
+   *
+   * @throws IOException
+   */
   public static void processInput() throws IOException {
-    out.print(format(OUTPUT_PATTERN, "command"));
+    out.println(SecretsVaultUtils.CURRENT_USER + " vault");
+    out.print("\tcommand: ");
 
     Scanner scanner = SecretsVaultUtils.getScanner();
     String command = scanner.next();
-    while (!"exit".equals(command)) {
-      out.print(format(OUTPUT_PATTERN, "filename"));
-      File fileSubject = new File(scanner.next());
-
+    while (!TERMINATION_COMMANDS.contains(command)) {
+      out.print("\tfilename: ");
+      String filename = scanner.next();
+      File fileSubject = new File(filename);
       FileEventFactory.getFileEvent(FileShellCommand.fromValue(command)).onEvent(fileSubject);
 
-      out.print("\n" + format(OUTPUT_PATTERN, "command"));
+      out.print("\n\tcommand: ");
       command = scanner.next();
     }
     scanner.close();

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * @author Filipov, Radoslav
  */
-public class Secret {
+public class FileSecret {
 
   @JsonIgnore
   private String name;
@@ -16,10 +16,10 @@ public class Secret {
   private String iv;
   private String user;
 
-  public Secret() {
+  public FileSecret() {
   }
 
-  public Secret(String name, String value) {
+  public FileSecret(String name, String value) {
     this.name = name;
     this.value = value;
   }

@@ -12,6 +12,12 @@ public final class FileEventFactory {
     // this class should not be instantiated
   }
 
+  /**
+   * Returns file event object of the corresponding command
+   *
+   * @param command
+   * @return fileEvent
+   */
   public static FileEvent getFileEvent(FileShellCommand command) {
     switch (command) {
       case READ:
