@@ -18,7 +18,7 @@ public final class FileEventFactory {
    * @param command
    * @return fileEvent
    */
-  public static FileEvent getFileEvent(FileShellCommand command) {
+  public static FileEvent getFileEvent(ShellCommand command) {
     switch (command) {
       case READ:
         return new FileReadEvent();

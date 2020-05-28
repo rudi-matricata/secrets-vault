@@ -3,7 +3,7 @@
  */
 package com.secrets.vault.shell;
 
-import static com.secrets.vault.model.FileShellCommand.fromValue;
+import static com.secrets.vault.model.ShellCommand.fromValue;
 import static java.lang.System.out;
 
 import java.io.File;
@@ -14,7 +14,7 @@ import java.util.Set;
 
 import com.secrets.vault.SecretsVaultUtils;
 import com.secrets.vault.model.FileEventFactory;
-import com.secrets.vault.model.FileShellCommand;
+import com.secrets.vault.model.ShellCommand;
 import com.secrets.vault.validation.NonBlankInputValidator;
 
 /**
@@ -42,8 +42,8 @@ public final class ShellProcessor {
     out.print("\tcommand: ");
 
     Scanner scanner = SecretsVaultUtils.getScanner();
-    FileShellCommand enumCommand = fromValue(scanner.next());
-    while (!TERMINATION_COMMANDS.contains(enumCommand.name())) {
+    ShellCommand enumCommand = fromValue(scanner.next());
+    while (!TERMINATION_COMMANDS.contains(enumCommand.toString())) {
       out.print("\tfilename: ");
       String filename = scanner.next();
       nonBlankInputValidator.validate(filename);
