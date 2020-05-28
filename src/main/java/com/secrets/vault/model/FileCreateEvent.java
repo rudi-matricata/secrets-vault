@@ -24,6 +24,7 @@ import com.secrets.vault.SecretsVaultUtils;
 import com.secrets.vault.crypto.SecretsEncryptor;
 import com.secrets.vault.exception.CryptoRuntimeException;
 import com.secrets.vault.validation.MasterPasswordValidator;
+import com.secrets.vault.validation.NonBlankInputValidator;
 
 /**
  * @author Filipov, Radoslav
@@ -32,6 +33,7 @@ public class FileCreateEvent implements FileEvent {
 
   private SecretsEncryptor secretsEncryptor;
   private MasterPasswordValidator masterPasswordValidator;
+  private NonBlankInputValidator nonBlankInputValidator;
 
   public FileCreateEvent() {
     try {
@@ -40,6 +42,7 @@ public class FileCreateEvent implements FileEvent {
       throw new CryptoRuntimeException("Error while initializing cipher", e);
     }
     this.masterPasswordValidator = new MasterPasswordValidator();
+    this.nonBlankInputValidator = new NonBlankInputValidator();
   }
 
   /**
@@ -54,6 +57,7 @@ public class FileCreateEvent implements FileEvent {
       Scanner scanner = SecretsVaultUtils.getScanner();
       out.print("\tsecret value: ");
       String secret = scanner.next();
+      nonBlankInputValidator.validate(secret);
 
       out.print("\tmaster password to secure the file: ");
       String masterPassword = scanner.next();
@@ -66,7 +70,7 @@ public class FileCreateEvent implements FileEvent {
       fileSecret.setCreatedAt(new Date());
       SecretsVaultUtils.getObjectMapper().writeValue(fileSubject, fileSecret);
 
-      out.println("File successfully created");
+      out.println("\n\tFile successfully created!");
     } catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | IllegalBlockSizeException | BadPaddingException
         | InvalidParameterSpecException e) {
       throw new CryptoRuntimeException("Error occured while trying to encrypt the provided secret", e);

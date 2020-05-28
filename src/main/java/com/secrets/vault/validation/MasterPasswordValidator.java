@@ -12,14 +12,15 @@ public class MasterPasswordValidator implements InputValidator {
   private static final String REGEX_FOR_CAPITAL_LETTERS = ".*[A-Z].*";
   private static final String REGEX_FOR_SMALL_LETTERS = ".*[a-z].*";
 
+  private NonBlankInputValidator nonBlankInputValidator = new NonBlankInputValidator();
+
   /**
    * Validates the password received that is used for AES key generation
    */
   @Override
   public void validate(String password) {
-    if ((password == null) || password.isBlank()) {
-      throw new IllegalArgumentException("Password should not be blank");
-    }
+    nonBlankInputValidator.validate(password);
+
     if ((password.length() < 6) || (password.length() > 64)) {
       throw new IllegalArgumentException("Password should be at least 6 and no more than 64 characters long");
     }
