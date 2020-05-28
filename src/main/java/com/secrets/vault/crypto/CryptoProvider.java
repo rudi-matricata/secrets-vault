@@ -44,9 +44,11 @@ public abstract class CryptoProvider {
    * @throws InvalidKeySpecException
    */
   protected void setSecretKey(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    if (password == null) {
+      throw new IllegalArgumentException("Password used for key generation should not be null");
+    }
     char[] passwordAsCharArray = password.toCharArray();
     byte[] salt = getSalt();
-
     PBEKeySpec keySpec = new PBEKeySpec(passwordAsCharArray, salt, NUMBER_OF_ITERATIONS, KEY_LENGTH);
     SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_DERIVATION_ALGORITHM);
 
