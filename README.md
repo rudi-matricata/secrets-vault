@@ -1,3 +1,19 @@
 # secrets-vault
 
-This vault will enable you to store credentials securely on your file system. The secrets/credentials will be encrypted with a key/password provided by you.
+Secrets Vault enables you to store secrets/credentials securely on your file system. The secrets/credentials are encrypted with a key that is derived from a password provided by you (the user). Every secret is associated with its own password so you should provide the password that corresponds to the secret every time you read it (or choose a password every time you create a secret). The password should be between 6 nad 64 characters and should contain at least one symbol of each group: digits, capital letters and small letters. 
+
+### Creating a secret (file)
+
+The flow in this scenario is as follows:
+
+1. Specify 'create' command.
+2. Type a filename. (could not be blank)
+  - if there is already a file with the given name - fail
+3. Type the secret you want to be protected.
+4. Type the master password that is used for protection.
+5. An AES data encryption key is generated using the PBKDF2 generation function with HMAC-SHA256.
+6. The secret you provided in 4. is encrypted using AES encryption (with the generated in 5. key) in CBC mode.
+7. A file with the specifed in 2. name is created and the encrypted value (alongside with the IV and the provided master password hash (SHA-256)) is written.
+
+- Steps 1 to 4 should be made by the user
+
