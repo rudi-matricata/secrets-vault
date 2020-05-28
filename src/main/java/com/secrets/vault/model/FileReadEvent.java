@@ -57,16 +57,21 @@ public class FileReadEvent implements FileEvent {
       out.print("\tmaster password used for file encryption: ");
       String password = SecretsVaultUtils.getScanner().next();
       masterPasswordValidator.validate(password);
+      masterPasswordValidator.validatePasswordMatchAgainstHashValue(password, secretRead);
+
       secretsDecryptor.init(password, getDecoder().decode(secretRead.getIv()));
 
       secretRead.setValue(secretsDecryptor.decrypt(getDecoder().decode(secretRead.getValue())));
-      secretRead.setIv(null);
-      secretRead.setUser(null);
+      clearFields(secretRead);
     } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException e) {
       throw new CryptoRuntimeException("Error occured while trying to decrypt the secret", e);
     }
-
     out.print(getObjectMapper().writeValueAsString(secretRead) + "\n");
   }
 
+  private void clearFields(FileSecret fileSecret) {
+    fileSecret.setIv(null);
+    fileSecret.setUser(null);
+    fileSecret.setPasswordHash(null);
+  }
 }

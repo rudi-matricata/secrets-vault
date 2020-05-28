@@ -3,11 +3,14 @@
  */
 package com.secrets.vault.model;
 
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.secrets.vault.SecretsVaultUtils;
 
 /**
  * @author Filipov, Radoslav
@@ -17,9 +20,11 @@ public class FileSecret {
 
   private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
+  // this should be the already encrypted value
   private String value;
   private String iv;
   private String user;
+  private String passwordHash;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT, timezone = "UTC")
   private Date createdAt;
@@ -61,6 +66,30 @@ public class FileSecret {
 
   public void setCreatedAt(Date createdAt) {
     this.createdAt = createdAt;
+  }
+
+  public String getPasswordHash() {
+    return passwordHash;
+  }
+
+  /**
+   * Hashes the given password using SHA-256
+   *
+   * @param password
+   *          Plain password as string
+   * @throws NoSuchAlgorithmException
+   */
+  public void setPasswordHashFromPlainPassword(String password) throws NoSuchAlgorithmException {
+    this.passwordHash = Base64.getEncoder().encodeToString(SecretsVaultUtils.getSHA256HashedValue(password));
+  }
+
+  /**
+   * Used by Jackson for deserialization
+   *
+   * @param passwordHash
+   */
+  public void setPasswordHash(String passwordHash) {
+    this.passwordHash = passwordHash;
   }
 
 }

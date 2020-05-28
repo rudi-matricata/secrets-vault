@@ -3,6 +3,14 @@
  */
 package com.secrets.vault.validation;
 
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Base64;
+
+import com.secrets.vault.SecretsVaultUtils;
+import com.secrets.vault.exception.CryptoRuntimeException;
+import com.secrets.vault.model.FileSecret;
+
 /**
  * @author Filipov, Radoslav
  */
@@ -37,6 +45,14 @@ public class MasterPasswordValidator implements InputValidator {
         tokenToValidate.matches(REGEX_FOR_SMALL_LETTERS);
     //@formatter:on
 
+  }
+
+  public void validatePasswordMatchAgainstHashValue(String password, FileSecret fileSecret) throws NoSuchAlgorithmException {
+    byte[] providedPasswordHash = SecretsVaultUtils.getSHA256HashedValue(password);
+    byte[] passwordHashFromFile = Base64.getDecoder().decode(fileSecret.getPasswordHash());
+    if (!Arrays.equals(providedPasswordHash, passwordHashFromFile)) {
+      throw new CryptoRuntimeException("Password used for encrpytion does NOT match the one provided for decryption");
+    }
   }
 
 }

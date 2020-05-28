@@ -8,6 +8,10 @@ package com.secrets.vault.exception;
  */
 public class CryptoRuntimeException extends RuntimeException {
 
+  public CryptoRuntimeException(String message) {
+    super(message);
+  }
+
   public CryptoRuntimeException(String message, Throwable throwable) {
     super(message, throwable);
   }

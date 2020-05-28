@@ -3,6 +3,9 @@
  */
 package com.secrets.vault;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,6 +37,11 @@ public final class SecretsVaultUtils {
       return new Scanner(System.in);
     }
     return scanner;
+  }
+
+  public static byte[] getSHA256HashedValue(String tokenToBeHashed) throws NoSuchAlgorithmException {
+    MessageDigest sha256MessageDigest = MessageDigest.getInstance("SHA-256");
+    return sha256MessageDigest.digest(tokenToBeHashed.getBytes(StandardCharsets.UTF_8));
   }
 
 }
