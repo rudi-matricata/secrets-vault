@@ -6,7 +6,6 @@ package com.secrets.vault.model;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -18,8 +17,6 @@ public class FileSecret {
 
   private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
-  @JsonIgnore
-  private String name;
   private String value;
   private String iv;
   private String user;
@@ -30,17 +27,8 @@ public class FileSecret {
   public FileSecret() {
   }
 
-  public FileSecret(String name, String value) {
-    this.name = name;
+  public FileSecret(String value) {
     this.value = value;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   public String getValue() {

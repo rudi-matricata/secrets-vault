@@ -64,7 +64,7 @@ public class FileCreateEvent implements FileEvent {
       masterPasswordValidator.validate(masterPassword);
       secretsEncryptor.init(masterPassword);
 
-      FileSecret fileSecret = new FileSecret(fileSubject.getName(), secretsEncryptor.encrypt(secret.getBytes(StandardCharsets.UTF_8)));
+      FileSecret fileSecret = new FileSecret(secretsEncryptor.encrypt(secret.getBytes(StandardCharsets.UTF_8)));
       fileSecret.setIv(getBase64EncodedIV());
       fileSecret.setUser(SecretsVaultUtils.CURRENT_USER);
       fileSecret.setCreatedAt(new Date());

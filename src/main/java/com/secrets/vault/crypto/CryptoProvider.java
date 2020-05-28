@@ -44,13 +44,13 @@ public abstract class CryptoProvider {
    * @throws InvalidKeySpecException
    */
   protected void setSecretKey(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
-    char[] chars = password.toCharArray();
+    char[] passwordAsCharArray = password.toCharArray();
     byte[] salt = getSalt();
 
-    PBEKeySpec spec = new PBEKeySpec(chars, salt, NUMBER_OF_ITERATIONS, KEY_LENGTH);
+    PBEKeySpec keySpec = new PBEKeySpec(passwordAsCharArray, salt, NUMBER_OF_ITERATIONS, KEY_LENGTH);
     SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_DERIVATION_ALGORITHM);
 
-    this.secretKey = new SecretKeySpec(keyFactory.generateSecret(spec).getEncoded(), "AES");
+    this.secretKey = new SecretKeySpec(keyFactory.generateSecret(keySpec).getEncoded(), "AES");
   }
 
   /**
