@@ -30,4 +30,4 @@ The flow in this scenario is as follows:
 - Steps 1 to 3 should be made by the user
 
 ### Example
-![Example Secrets Vault Usage] (./doc/secrets-vault-demo.PNG)
+![Example Secrets Vault Usage](doc/secrets-vault-demo.PNG)
