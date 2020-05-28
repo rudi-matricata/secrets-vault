@@ -18,7 +18,6 @@ import java.util.Scanner;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
 
 import com.secrets.vault.SecretsVaultUtils;
 import com.secrets.vault.crypto.SecretsEncryptor;
@@ -69,7 +68,7 @@ public class FileCreateEvent implements FileEvent {
   }
 
   private String getBase64EncodedIV() throws InvalidParameterSpecException {
-    return Base64.getEncoder().encodeToString(secretsEncryptor.getCipher().getParameters().getParameterSpec(IvParameterSpec.class).getIV());
+    return Base64.getEncoder().encodeToString(secretsEncryptor.getCipherIV());
   }
 
 }

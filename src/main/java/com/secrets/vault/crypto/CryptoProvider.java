@@ -7,15 +7,17 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * Base class that holds #Cipher and #Key
+ * Base class that holds #Cipher and #Key objects for AES crypto operations
  *
  * @author Filipov, Radoslav
  */
@@ -26,6 +28,8 @@ public abstract class CryptoProvider {
 
   private static final String KEY_DERIVATION_ALGORITHM = "PBKDF2WithHmacSHA256";
   private static final String CRYPTO_ALGORITHM = "AES/CBC/PKCS5Padding";
+  private static final int NUMBER_OF_ITERATIONS = 1000;
+  private static final int KEY_LENGTH = 256;
 
   public CryptoProvider() throws NoSuchAlgorithmException, NoSuchPaddingException {
     this.cipher = Cipher.getInstance(CRYPTO_ALGORITHM);
@@ -40,12 +44,10 @@ public abstract class CryptoProvider {
    * @throws InvalidKeySpecException
    */
   protected void setSecretKey(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
-    final int iterations = 1000;
-    final int keyLength = 256;
     char[] chars = password.toCharArray();
     byte[] salt = getSalt();
 
-    PBEKeySpec spec = new PBEKeySpec(chars, salt, iterations, keyLength);
+    PBEKeySpec spec = new PBEKeySpec(chars, salt, NUMBER_OF_ITERATIONS, KEY_LENGTH);
     SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_DERIVATION_ALGORITHM);
 
     this.secretKey = new SecretKeySpec(keyFactory.generateSecret(spec).getEncoded(), "AES");
@@ -60,8 +62,8 @@ public abstract class CryptoProvider {
     return "abcdefghijklmnop".getBytes(StandardCharsets.UTF_8);
   }
 
-  public Cipher getCipher() {
-    return cipher;
+  public byte[] getCipherIV() throws InvalidParameterSpecException {
+    return cipher.getParameters().getParameterSpec(IvParameterSpec.class).getIV();
   }
 
 }
