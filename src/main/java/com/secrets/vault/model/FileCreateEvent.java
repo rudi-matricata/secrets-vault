@@ -3,6 +3,7 @@
  */
 package com.secrets.vault.model;
 
+import static com.secrets.vault.SecretsVaultUtils.readSensitiveValue;
 import static java.lang.System.out;
 
 import java.io.File;
@@ -14,7 +15,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Scanner;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -54,13 +54,12 @@ public class FileCreateEvent implements FileEvent {
       throw new IllegalStateException("Requested file already exists: " + fileSubject.getName());
     }
     try {
-      Scanner scanner = SecretsVaultUtils.getScanner();
       out.print("\tsecret value: ");
-      String secret = scanner.next();
+      String secret = readSensitiveValue();
       nonBlankInputValidator.validate(secret);
 
       out.print("\tmaster password to secure the file: ");
-      String masterPassword = scanner.next();
+      String masterPassword = readSensitiveValue();
       masterPasswordValidator.validate(masterPassword);
       secretsEncryptor.init(masterPassword);
 

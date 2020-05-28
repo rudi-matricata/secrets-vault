@@ -3,10 +3,12 @@
  */
 package com.secrets.vault.shell;
 
+import static com.secrets.vault.model.FileShellCommand.fromValue;
 import static java.lang.System.out;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -40,19 +42,17 @@ public final class ShellProcessor {
     out.print("\tcommand: ");
 
     Scanner scanner = SecretsVaultUtils.getScanner();
-    String command = scanner.next();
-    nonBlankInputValidator.validate(command);
-    while (!TERMINATION_COMMANDS.contains(command)) {
+    FileShellCommand enumCommand = fromValue(scanner.next());
+    while (!TERMINATION_COMMANDS.contains(enumCommand.name())) {
       out.print("\tfilename: ");
       String filename = scanner.next();
       nonBlankInputValidator.validate(filename);
 
       File fileSubject = new File(filename);
-      FileEventFactory.getFileEvent(FileShellCommand.fromValue(command)).onEvent(fileSubject);
+      FileEventFactory.getFileEvent(enumCommand).onEvent(fileSubject);
 
-      out.print("\n\tcommand: ");
-      command = scanner.next();
-      nonBlankInputValidator.validate(command);
+      out.print(MessageFormat.format("\t{0}\n\tcommand: ", "-".repeat(50)));
+      enumCommand = fromValue(scanner.next());
     }
     scanner.close();
   }

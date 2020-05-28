@@ -56,7 +56,7 @@ public class FileReadEvent implements FileEvent {
     }
     try {
       out.print("\tmaster password used for file encryption: ");
-      String password = SecretsVaultUtils.getScanner().next();
+      String password = SecretsVaultUtils.readSensitiveValue();
       masterPasswordValidator.validate(password);
       masterPasswordValidator.validatePasswordMatchAgainstHashValue(password, secretRead);
 

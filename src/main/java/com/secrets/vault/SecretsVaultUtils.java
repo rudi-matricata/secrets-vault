@@ -6,6 +6,7 @@ package com.secrets.vault;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.MessageFormat;
 import java.util.Scanner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,6 +43,15 @@ public final class SecretsVaultUtils {
   public static byte[] getSHA256HashedValue(String tokenToBeHashed) throws NoSuchAlgorithmException {
     MessageDigest sha256MessageDigest = MessageDigest.getInstance("SHA-256");
     return sha256MessageDigest.digest(tokenToBeHashed.getBytes(StandardCharsets.UTF_8));
+  }
+
+  /**
+   * Reads and return the secret value from console, without showing it
+   */
+  public static String readSensitiveValue() {
+    String sensitiveValue = String.valueOf(System.console().readPassword());
+    System.out.print(MessageFormat.format("\t{0}({1} chars)\n", "*".repeat(sensitiveValue.length()), sensitiveValue.length()));
+    return sensitiveValue;
   }
 
 }
