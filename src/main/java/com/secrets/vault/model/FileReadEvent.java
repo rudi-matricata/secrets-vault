@@ -21,6 +21,7 @@ import com.secrets.vault.SecretsVaultUtils;
 import com.secrets.vault.crypto.SecretsDecryptor;
 import com.secrets.vault.exception.CryptoRuntimeException;
 import com.secrets.vault.exception.IllegalFileAccessException;
+import com.secrets.vault.validation.MasterPasswordValidator;
 
 /**
  * @author Filipov, Radoslav
@@ -28,6 +29,7 @@ import com.secrets.vault.exception.IllegalFileAccessException;
 public class FileReadEvent implements FileEvent {
 
   private SecretsDecryptor secretsDecryptor;
+  private MasterPasswordValidator masterPasswordValidator;
 
   public FileReadEvent() {
     try {
@@ -35,6 +37,7 @@ public class FileReadEvent implements FileEvent {
     } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
       throw new CryptoRuntimeException("Error while initializing cipher", e);
     }
+    this.masterPasswordValidator = new MasterPasswordValidator();
   }
 
   @Override
@@ -49,7 +52,9 @@ public class FileReadEvent implements FileEvent {
     }
     try {
       out.print("\tmaster password used for file encryption: ");
-      secretsDecryptor.init(SecretsVaultUtils.getScanner().next(), getDecoder().decode(secretRead.getIv()));
+      String password = SecretsVaultUtils.getScanner().next();
+      masterPasswordValidator.validate(password);
+      secretsDecryptor.init(password, getDecoder().decode(secretRead.getIv()));
 
       secretRead.setValue(secretsDecryptor.decrypt(getDecoder().decode(secretRead.getValue())));
       secretRead.setIv(null);

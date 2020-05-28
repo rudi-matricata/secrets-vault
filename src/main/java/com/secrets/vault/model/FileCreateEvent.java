@@ -23,6 +23,7 @@ import javax.crypto.NoSuchPaddingException;
 import com.secrets.vault.SecretsVaultUtils;
 import com.secrets.vault.crypto.SecretsEncryptor;
 import com.secrets.vault.exception.CryptoRuntimeException;
+import com.secrets.vault.validation.MasterPasswordValidator;
 
 /**
  * @author Filipov, Radoslav
@@ -30,6 +31,7 @@ import com.secrets.vault.exception.CryptoRuntimeException;
 public class FileCreateEvent implements FileEvent {
 
   private SecretsEncryptor secretsEncryptor;
+  private MasterPasswordValidator masterPasswordValidator;
 
   public FileCreateEvent() {
     try {
@@ -37,6 +39,7 @@ public class FileCreateEvent implements FileEvent {
     } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
       throw new CryptoRuntimeException("Error while initializing cipher", e);
     }
+    this.masterPasswordValidator = new MasterPasswordValidator();
   }
 
   /**
@@ -54,6 +57,7 @@ public class FileCreateEvent implements FileEvent {
 
       out.print("\tmaster password to secure the file: ");
       String masterPassword = scanner.next();
+      masterPasswordValidator.validate(masterPassword);
       secretsEncryptor.init(masterPassword);
 
       FileSecret fileSecret = new FileSecret(fileSubject.getName(), secretsEncryptor.encrypt(secret.getBytes(StandardCharsets.UTF_8)));
