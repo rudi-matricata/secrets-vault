@@ -2,6 +2,8 @@
 
 Secrets Vault enables you to store secrets/credentials securely on your file system. The secrets/credentials are encrypted with a key that is derived from a password provided by you (the user). Every secret is associated with its own password so you should provide the password that corresponds to the secret every time you read it (or choose a password every time you create a secret). The password should be between 6 nad 64 characters and should contain at least one symbol of each group: digits, capital letters and small letters. 
 
+Possible usage for now is storing securely large tokens(that can not be easily remembered by human) or securing many secrets just using a not so wide set of passwords to protect this secrets(though NOT so recommended). Currently there is a WIP of encrypting/decrypting large files.
+
 You can build the project using `mvn clean install`. If you want scan for vulnarabilties to be performed just use the `owasp-dependency-check` profile (`mvn clean install -Powasp-dependency-check`).
 
 ### Creating a secret (file)
