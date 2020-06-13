@@ -9,7 +9,7 @@ import java.util.Base64;
 
 import com.secrets.vault.SecretsVaultUtils;
 import com.secrets.vault.exception.CryptoRuntimeException;
-import com.secrets.vault.model.FileSecret;
+import com.secrets.vault.model.FileSecretMetadata;
 
 /**
  * @author Filipov, Radoslav
@@ -47,9 +47,9 @@ public class MasterPasswordValidator implements InputValidator {
 
   }
 
-  public void validatePasswordMatchAgainstHashValue(String password, FileSecret fileSecret) throws NoSuchAlgorithmException {
+  public void validatePasswordMatchAgainstHashValue(String password, FileSecretMetadata fileSecretMetadata) throws NoSuchAlgorithmException {
     byte[] providedPasswordHash = SecretsVaultUtils.getSHA256HashedValue(password);
-    byte[] passwordHashFromFile = Base64.getDecoder().decode(fileSecret.getPasswordHash());
+    byte[] passwordHashFromFile = Base64.getDecoder().decode(fileSecretMetadata.getPasswordHash());
     if (!Arrays.equals(providedPasswordHash, passwordHashFromFile)) {
       throw new CryptoRuntimeException("Password used for encrpytion does NOT match the one provided for decryption");
     }

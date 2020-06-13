@@ -64,11 +64,11 @@ public class FileDecryptEvent implements FileEvent {
       String password = SecretsVaultUtils.readSensitiveValue();
       masterPasswordValidator.validate(password);
 
-      FileSecret secretRead = getObjectMapper().readValue(fileMetaInformation, FileSecret.class);
-      masterPasswordValidator.validatePasswordMatchAgainstHashValue(password, secretRead);
-      secretsDecryptor.init(password, getDecoder().decode(secretRead.getIv()));
+      FileSecretMetadata secretMetadataRead = getObjectMapper().readValue(fileMetaInformation, FileSecretMetadata.class);
+      masterPasswordValidator.validatePasswordMatchAgainstHashValue(password, secretMetadataRead);
+      secretsDecryptor.init(password, getDecoder().decode(secretMetadataRead.getIv()));
 
-      String userFromSecret = secretsDecryptor.decrypt(Base64.getDecoder().decode(secretRead.getUser()));
+      String userFromSecret = secretsDecryptor.decrypt(Base64.getDecoder().decode(secretMetadataRead.getUser()));
       if (!SecretsVaultUtils.CURRENT_USER.equals(userFromSecret)) {
         throw new IllegalFileAccessException("Illegal access to file. The file requested to be read belongs to: " + userFromSecret);
       }
@@ -82,22 +82,22 @@ public class FileDecryptEvent implements FileEvent {
         }
       }
 
-      clearFields(secretRead);
-      printJsonOutput(secretRead);
+      clearFields(secretMetadataRead);
+      printJsonOutput(secretMetadataRead);
     } catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | IllegalBlockSizeException | BadPaddingException e) {
       throw new CryptoRuntimeException("Error occured while trying to decrypt the secret", e);
     }
   }
 
-  private void printJsonOutput(FileSecret fileSecret) throws JsonProcessingException {
-    String jsonOutput = getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(fileSecret);
+  private void printJsonOutput(FileSecretMetadata fileSecretMetadata) throws JsonProcessingException {
+    String jsonOutput = getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(fileSecretMetadata);
     jsonOutput = "\n\t" + jsonOutput.replace("\n", "\n\t");
     out.println(jsonOutput);
   }
 
-  private void clearFields(FileSecret fileSecret) {
-    fileSecret.setIv(null);
-    fileSecret.setUser(null);
-    fileSecret.setPasswordHash(null);
+  private void clearFields(FileSecretMetadata fileSecretMetadata) {
+    fileSecretMetadata.setIv(null);
+    fileSecretMetadata.setUser(null);
+    fileSecretMetadata.setPasswordHash(null);
   }
 }

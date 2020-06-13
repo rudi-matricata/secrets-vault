@@ -16,7 +16,7 @@ import com.secrets.vault.SecretsVaultUtils;
  * @author Filipov, Radoslav
  */
 @JsonInclude(Include.NON_EMPTY)
-public class FileSecret {
+public class FileSecretMetadata {
 
   private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 

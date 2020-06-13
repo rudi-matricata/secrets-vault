@@ -76,13 +76,13 @@ public class FileEncryptEvent implements FileEvent {
         }
       }
 
-      FileSecret fileSecret = new FileSecret();
-      fileSecret.setPasswordHashFromPlainPassword(masterPassword);
-      fileSecret.setIv(getBase64EncodedIV());
-      fileSecret.setUser(secretsEncryptor.encrypt(SecretsVaultUtils.CURRENT_USER.getBytes(UTF_8)));
-      fileSecret.setEncryptedAt(new Date());
+      FileSecretMetadata fileSecretMetadata = new FileSecretMetadata();
+      fileSecretMetadata.setPasswordHashFromPlainPassword(masterPassword);
+      fileSecretMetadata.setIv(getBase64EncodedIV());
+      fileSecretMetadata.setUser(secretsEncryptor.encrypt(SecretsVaultUtils.CURRENT_USER.getBytes(UTF_8)));
+      fileSecretMetadata.setEncryptedAt(new Date());
       SecretsVaultUtils.getObjectMapper().writeValue(new File(getFileAbsolutePath(SecretsVaultUtils.META_FILENAME_PREFIX, fileToBeEncryptedName)),
-          fileSecret);
+          fileSecretMetadata);
 
       out.println("\n\tFile successfully encrypted!");
     } catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | InvalidParameterSpecException | IllegalBlockSizeException
