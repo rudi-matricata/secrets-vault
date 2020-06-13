@@ -20,29 +20,12 @@ public class FileSecret {
 
   private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
-  // this should be the already encrypted value
-  private String value;
   private String iv;
   private String user;
   private String passwordHash;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT, timezone = "UTC")
-  private Date createdAt;
-
-  public FileSecret() {
-  }
-
-  public FileSecret(String value) {
-    this.value = value;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
+  private Date encryptedAt;
 
   public String getIv() {
     return iv;
@@ -60,12 +43,12 @@ public class FileSecret {
     this.user = user;
   }
 
-  public Date getCreatedAt() {
-    return createdAt;
+  public Date getEncryptedAt() {
+    return encryptedAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
+  public void setEncryptedAt(Date createdAt) {
+    this.encryptedAt = createdAt;
   }
 
   public String getPasswordHash() {

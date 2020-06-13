@@ -6,7 +6,6 @@ package com.secrets.vault.shell;
 import static com.secrets.vault.shell.ShellCommand.fromValue;
 import static java.lang.System.out;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Scanner;
@@ -47,8 +46,7 @@ public final class ShellProcessor {
       String filename = scanner.next();
       nonBlankInputValidator.validate(filename);
 
-      File fileSubject = new File(filename);
-      FileEventFactory.getFileEvent(enumCommand).onEvent(fileSubject);
+      FileEventFactory.getFileEvent(enumCommand).onEvent(filename);
 
       out.print(MessageFormat.format("\t{0}\n\tcommand: ", "-".repeat(50)));
       enumCommand = fromValue(scanner.next());

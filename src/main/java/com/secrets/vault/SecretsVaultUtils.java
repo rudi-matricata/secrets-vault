@@ -23,6 +23,9 @@ public final class SecretsVaultUtils {
   public static final String CURRENT_USER = System.getProperty("user.name");
   public static final String OUTPUT_PATTERN = "[" + CURRENT_USER + "] {0}: ";
 
+  public static final String ENCRYPED_FILENAME_PREFIX = "encrypted_";
+  public static final String META_FILENAME_PREFIX = "meta_";
+
   private static ObjectMapper objectMapper;
   private static Scanner scanner;
 
@@ -52,6 +55,10 @@ public final class SecretsVaultUtils {
     String sensitiveValue = String.valueOf(System.console().readPassword());
     System.out.print(MessageFormat.format("\t{0}({1} chars)\n", "*".repeat(sensitiveValue.length()), sensitiveValue.length()));
     return sensitiveValue;
+  }
+
+  public static String getFileAbsolutePath(String filenamePrefix, String filename) {
+    return System.getProperty("user.home") + "\\secrets_keeper\\" + filenamePrefix + filename;
   }
 
 }

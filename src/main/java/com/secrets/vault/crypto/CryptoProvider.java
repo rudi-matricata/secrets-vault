@@ -68,4 +68,8 @@ public abstract class CryptoProvider {
     return cipher.getParameters().getParameterSpec(IvParameterSpec.class).getIV();
   }
 
+  public Cipher getCipher() {
+    return this.cipher;
+  }
+
 }

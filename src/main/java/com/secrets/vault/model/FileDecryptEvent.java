@@ -3,17 +3,24 @@
  */
 package com.secrets.vault.model;
 
+import static com.secrets.vault.SecretsVaultUtils.ENCRYPED_FILENAME_PREFIX;
+import static com.secrets.vault.SecretsVaultUtils.getFileAbsolutePath;
 import static com.secrets.vault.SecretsVaultUtils.getObjectMapper;
 import static java.lang.System.out;
 import static java.util.Base64.getDecoder;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
+import javax.crypto.CipherInputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
@@ -27,12 +34,12 @@ import com.secrets.vault.validation.MasterPasswordValidator;
 /**
  * @author Filipov, Radoslav
  */
-public class FileReadEvent implements FileEvent {
+public class FileDecryptEvent implements FileEvent {
 
   private SecretsDecryptor secretsDecryptor;
   private MasterPasswordValidator masterPasswordValidator;
 
-  public FileReadEvent() {
+  public FileDecryptEvent() {
     try {
       this.secretsDecryptor = new SecretsDecryptor();
     } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
@@ -42,32 +49,44 @@ public class FileReadEvent implements FileEvent {
   }
 
   /**
-   * Should be called on request for reading a file.
+   * Should be called on request for decrypting a file.
    */
   @Override
-  public void onEvent(File fileSubject) throws IOException {
-    if (!fileSubject.exists()) {
-      throw new IllegalStateException("Requested file for reading does NOT exist: " + fileSubject.getName());
+  public void onEvent(String filename) throws IOException {
+    File fileToBeDecrypted = new File(getFileAbsolutePath(ENCRYPED_FILENAME_PREFIX, filename));
+    File fileMetaInformation = new File(getFileAbsolutePath(SecretsVaultUtils.META_FILENAME_PREFIX, filename));
+    if (!fileToBeDecrypted.exists() || !fileMetaInformation.exists()) {
+      throw new IllegalStateException("Decryption cannot be performed because a file associated with it was not found");
     }
 
-    FileSecret secretRead = getObjectMapper().readValue(fileSubject, FileSecret.class);
-    if (!SecretsVaultUtils.CURRENT_USER.equals(secretRead.getUser())) {
-      throw new IllegalFileAccessException("Illegal access to file. The file requested to be read belongs to: " + secretRead.getUser());
-    }
     try {
       out.print("\tmaster password used for file encryption: ");
       String password = SecretsVaultUtils.readSensitiveValue();
       masterPasswordValidator.validate(password);
-      masterPasswordValidator.validatePasswordMatchAgainstHashValue(password, secretRead);
 
+      FileSecret secretRead = getObjectMapper().readValue(fileMetaInformation, FileSecret.class);
+      masterPasswordValidator.validatePasswordMatchAgainstHashValue(password, secretRead);
       secretsDecryptor.init(password, getDecoder().decode(secretRead.getIv()));
 
-      secretRead.setValue(secretsDecryptor.decrypt(getDecoder().decode(secretRead.getValue())));
+      String userFromSecret = secretsDecryptor.decrypt(Base64.getDecoder().decode(secretRead.getUser()));
+      if (!SecretsVaultUtils.CURRENT_USER.equals(userFromSecret)) {
+        throw new IllegalFileAccessException("Illegal access to file. The file requested to be read belongs to: " + userFromSecret);
+      }
+
+      try (CipherInputStream cis = new CipherInputStream(new FileInputStream(fileToBeDecrypted), secretsDecryptor.getCipher());
+          OutputStream os = new FileOutputStream(fileToBeDecrypted.getName().replace(ENCRYPED_FILENAME_PREFIX, ""))) {
+        byte[] buffer = new byte[8192];
+        int count;
+        while ((count = cis.read(buffer)) > 0) {
+          os.write(buffer, 0, count);
+        }
+      }
+
       clearFields(secretRead);
-    } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+      printJsonOutput(secretRead);
+    } catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | IllegalBlockSizeException | BadPaddingException e) {
       throw new CryptoRuntimeException("Error occured while trying to decrypt the secret", e);
     }
-    printJsonOutput(secretRead);
   }
 
   private void printJsonOutput(FileSecret fileSecret) throws JsonProcessingException {

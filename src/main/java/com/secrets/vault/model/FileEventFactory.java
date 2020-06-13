@@ -22,10 +22,10 @@ public final class FileEventFactory {
    */
   public static FileEvent getFileEvent(ShellCommand command) {
     switch (command) {
-      case READ:
-        return new FileReadEvent();
-      case CREATE:
-        return new FileCreateEvent();
+      case DECRYPT:
+        return new FileDecryptEvent();
+      case ENCRYPT:
+        return new FileEncryptEvent();
 
       default:
         throw new IllegalArgumentException("Illegal value provided: " + command.name());
