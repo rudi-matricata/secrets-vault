@@ -1,7 +1,7 @@
 /**
  * Created on May 27, 2020 by Radoslav Filipov
  */
-package com.secrets.vault.model;
+package com.secrets.vault.event;
 
 import com.secrets.vault.shell.ShellCommand;
 
@@ -22,11 +22,12 @@ public final class FileEventFactory {
    */
   public static FileEvent getFileEvent(ShellCommand command) {
     switch (command) {
-      case READ:
-        return new FileReadEvent();
+      case DECRYPT:
+        return new FileDecryptEvent();
+      case ENCRYPT:
+        return new FileEncryptEvent();
       case CREATE:
         return new FileCreateEvent();
-
       default:
         throw new IllegalArgumentException("Illegal value provided: " + command.name());
 

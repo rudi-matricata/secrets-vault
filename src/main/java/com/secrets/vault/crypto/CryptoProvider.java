@@ -36,7 +36,7 @@ public abstract class CryptoProvider {
   }
 
   /**
-   * Derives an AES key and sets it.
+   * Derives an AES key.
    *
    * @param password
    *          Password secret used for AES key derivation.
@@ -47,9 +47,7 @@ public abstract class CryptoProvider {
     if (password == null) {
       throw new IllegalArgumentException("Password used for key generation should not be null");
     }
-    char[] passwordAsCharArray = password.toCharArray();
-    byte[] salt = getSalt();
-    PBEKeySpec keySpec = new PBEKeySpec(passwordAsCharArray, salt, NUMBER_OF_ITERATIONS, KEY_LENGTH);
+    PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray(), getSalt(), NUMBER_OF_ITERATIONS, KEY_LENGTH);
     SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_DERIVATION_ALGORITHM);
 
     this.secretKey = new SecretKeySpec(keyFactory.generateSecret(keySpec).getEncoded(), "AES");
@@ -66,6 +64,10 @@ public abstract class CryptoProvider {
 
   public byte[] getCipherIV() throws InvalidParameterSpecException {
     return cipher.getParameters().getParameterSpec(IvParameterSpec.class).getIV();
+  }
+
+  public Cipher getCipher() {
+    return this.cipher;
   }
 
 }

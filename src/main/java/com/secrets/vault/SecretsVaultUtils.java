@@ -23,6 +23,9 @@ public final class SecretsVaultUtils {
   public static final String CURRENT_USER = System.getProperty("user.name");
   public static final String OUTPUT_PATTERN = "[" + CURRENT_USER + "] {0}: ";
 
+  public static final String ENCRYPED_FILENAME_PREFIX = "encrypted_";
+  public static final String META_FILENAME_PREFIX = "meta_";
+
   private static ObjectMapper objectMapper;
   private static Scanner scanner;
 
@@ -33,6 +36,9 @@ public final class SecretsVaultUtils {
     return objectMapper;
   }
 
+  /**
+   * @return a Scanner object attached to the System.in input stream
+   */
   public static Scanner getScanner() {
     if (scanner == null) {
       return new Scanner(System.in);
@@ -40,18 +46,29 @@ public final class SecretsVaultUtils {
     return scanner;
   }
 
+  /**
+   * Hashes a given token using 'SHA-256' algorithm.
+   *
+   * @param tokenToBeHashed
+   * @return Hashed token value
+   * @throws NoSuchAlgorithmException
+   */
   public static byte[] getSHA256HashedValue(String tokenToBeHashed) throws NoSuchAlgorithmException {
     MessageDigest sha256MessageDigest = MessageDigest.getInstance("SHA-256");
     return sha256MessageDigest.digest(tokenToBeHashed.getBytes(StandardCharsets.UTF_8));
   }
 
   /**
-   * Reads and return the secret value from console, without showing it
+   * Reads and return the secret value from console, without showing it.
    */
   public static String readSensitiveValue() {
     String sensitiveValue = String.valueOf(System.console().readPassword());
     System.out.print(MessageFormat.format("\t{0}({1} chars)\n", "*".repeat(sensitiveValue.length()), sensitiveValue.length()));
     return sensitiveValue;
+  }
+
+  public static String getFileAbsolutePath(String filenamePrefix, String filename) {
+    return System.getProperty("user.home") + "\\secrets_keeper\\" + filenamePrefix + filename;
   }
 
 }
