@@ -8,7 +8,7 @@ package com.secrets.vault.shell;
  */
 public enum ShellCommand {
 
-  DECRYPT("decrypt"), ENCRYPT("encrypt"), EXIT("exit"), Q("q");
+  DECRYPT("decrypt"), ENCRYPT("encrypt"), CREATE("create"), EXIT("exit"), Q("q");
 
   private String name;
 

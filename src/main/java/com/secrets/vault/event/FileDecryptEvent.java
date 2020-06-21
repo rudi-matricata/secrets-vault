@@ -1,7 +1,7 @@
 /**
  * Created on May 27, 2020 by Radoslav Filipov
  */
-package com.secrets.vault.model;
+package com.secrets.vault.event;
 
 import static com.secrets.vault.SecretsVaultUtils.ENCRYPED_FILENAME_PREFIX;
 import static com.secrets.vault.SecretsVaultUtils.getFileAbsolutePath;
@@ -29,6 +29,7 @@ import com.secrets.vault.SecretsVaultUtils;
 import com.secrets.vault.crypto.SecretsDecryptor;
 import com.secrets.vault.exception.CryptoRuntimeException;
 import com.secrets.vault.exception.IllegalFileAccessException;
+import com.secrets.vault.model.FileSecretMetadata;
 import com.secrets.vault.validation.MasterPasswordValidator;
 
 /**

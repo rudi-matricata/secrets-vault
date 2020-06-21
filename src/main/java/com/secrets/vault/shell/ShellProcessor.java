@@ -12,7 +12,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 import com.secrets.vault.SecretsVaultUtils;
-import com.secrets.vault.model.FileEventFactory;
+import com.secrets.vault.event.FileEventFactory;
 import com.secrets.vault.validation.NonBlankInputValidator;
 
 /**
