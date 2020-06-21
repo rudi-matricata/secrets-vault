@@ -62,6 +62,18 @@ public abstract class EncryptEvent implements FileEvent {
     return masterPassword;
   }
 
+  /**
+   * Saves the metadata(user, used password hash etc.) related to the encrypted file.
+   *
+   * @param masterPassword
+   *          The password use for protection(encryption) of the file
+   * @param filename
+   * @throws NoSuchAlgorithmException
+   * @throws IllegalBlockSizeException
+   * @throws BadPaddingException
+   * @throws IOException
+   * @throws InvalidParameterSpecException
+   */
   protected void saveMetadata(String masterPassword, String filename)
       throws NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, IOException, InvalidParameterSpecException {
     FileSecretMetadata fileSecretMetadata = new FileSecretMetadata();
@@ -78,6 +90,13 @@ public abstract class EncryptEvent implements FileEvent {
     return Base64.getEncoder().encodeToString(secretsEncryptor.getCipherIV());
   }
 
+  /**
+   * Save the file using #CipherOutputStream and the provided #Cipher.
+   *
+   * @param fileToBeEncryptedName
+   * @param dataWriter
+   * @throws IOException
+   */
   protected void encryptAndSaveFile(String fileToBeEncryptedName, DataWriter dataWriter) throws IOException {
     File encryptedFile = new File(getFileAbsolutePath(SecretsVaultUtils.ENCRYPED_FILENAME_PREFIX, fileToBeEncryptedName));
     encryptedFile.getParentFile().mkdirs();

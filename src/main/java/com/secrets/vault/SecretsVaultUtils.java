@@ -36,6 +36,9 @@ public final class SecretsVaultUtils {
     return objectMapper;
   }
 
+  /**
+   * @return a Scanner object attached to the System.in input stream
+   */
   public static Scanner getScanner() {
     if (scanner == null) {
       return new Scanner(System.in);
@@ -43,13 +46,20 @@ public final class SecretsVaultUtils {
     return scanner;
   }
 
+  /**
+   * Hashes a given token using 'SHA-256' algorithm.
+   *
+   * @param tokenToBeHashed
+   * @return Hashed token value
+   * @throws NoSuchAlgorithmException
+   */
   public static byte[] getSHA256HashedValue(String tokenToBeHashed) throws NoSuchAlgorithmException {
     MessageDigest sha256MessageDigest = MessageDigest.getInstance("SHA-256");
     return sha256MessageDigest.digest(tokenToBeHashed.getBytes(StandardCharsets.UTF_8));
   }
 
   /**
-   * Reads and return the secret value from console, without showing it
+   * Reads and return the secret value from console, without showing it.
    */
   public static String readSensitiveValue() {
     String sensitiveValue = String.valueOf(System.console().readPassword());
