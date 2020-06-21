@@ -3,12 +3,12 @@
  */
 package com.secrets.vault.event;
 
-import static com.secrets.vault.SecretsVaultUtils.getObjectMapper;
 import static com.secrets.vault.SecretsVaultUtils.readSensitiveValue;
 import static java.lang.System.out;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -29,6 +29,7 @@ public class FileCreateEvent extends EncryptEvent {
 
   public FileCreateEvent() {
     super();
+    this.nonBlankInputValidator = new NonBlankInputValidator();
   }
 
   /**
@@ -49,7 +50,7 @@ public class FileCreateEvent extends EncryptEvent {
 
       String masterPassword = readMasterPasswordAndInitEncryptor();
 
-      encryptAndSaveFile(fileToBeCreatedName, os -> getObjectMapper().writeValue(os, secret));
+      encryptAndSaveFile(fileToBeCreatedName, os -> os.write(secret.getBytes(StandardCharsets.UTF_8)));
       saveMetadata(masterPassword, fileToBeCreatedName);
 
       out.println("\n\tFile successfully created!");
