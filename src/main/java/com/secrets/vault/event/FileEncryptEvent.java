@@ -14,9 +14,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-
 import com.secrets.vault.exception.CryptoRuntimeException;
 
 /**
@@ -53,8 +50,7 @@ public class FileEncryptEvent extends EncryptEvent {
       saveMetadata(masterPassword, fileToBeEncryptedName);
 
       out.println("\n\tFile successfully encrypted!");
-    } catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | InvalidParameterSpecException | IllegalBlockSizeException
-        | BadPaddingException e) {
+    } catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | InvalidParameterSpecException e) {
       throw new CryptoRuntimeException("Error occured while trying to encrypt the provided secret", e);
     }
   }

@@ -6,21 +6,18 @@ package com.secrets.vault.crypto;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Base64;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 /**
- * Class used for AES encryption. Currently CBC mode with PKCS5Padding is used.
+ * Class used for AES encryption. Currently GCM mode with NoPadding is used.
  *
  * @author Filipov, Radoslav
  */
-public class SecretsEncryptor extends CryptoProvider {
+public class EncryptionManager extends CryptoProvider {
 
-  public SecretsEncryptor() throws NoSuchAlgorithmException, NoSuchPaddingException {
+  public EncryptionManager() throws NoSuchAlgorithmException, NoSuchPaddingException {
     super();
   }
 
@@ -36,20 +33,6 @@ public class SecretsEncryptor extends CryptoProvider {
   public void init(String password) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
     setSecretKey(password);
     this.cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-  }
-
-  /**
-   * Performs encryption.
-   *
-   * @param plaintext
-   *          Plaintext to be encrypted.
-   * @return
-   *         Cipher text as base64 encoded string.
-   * @throws IllegalBlockSizeException
-   * @throws BadPaddingException
-   */
-  public String encrypt(byte[] plaintext) throws IllegalBlockSizeException, BadPaddingException {
-    return Base64.getEncoder().encodeToString(cipher.doFinal(plaintext));
   }
 
 }

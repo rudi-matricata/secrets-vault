@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.secrets.vault.SecretsVaultUtils;
@@ -21,8 +22,9 @@ public class FileSecretMetadata {
   private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
   private String iv;
-  private String user;
   private String passwordHash;
+
+  private byte[] encrypedMetadata;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT, timezone = "UTC")
   private Date encryptedAt;
@@ -33,14 +35,6 @@ public class FileSecretMetadata {
 
   public void setIv(String iv) {
     this.iv = iv;
-  }
-
-  public String getUser() {
-    return user;
-  }
-
-  public void setUser(String user) {
-    this.user = user;
   }
 
   public Date getEncryptedAt() {
@@ -73,6 +67,14 @@ public class FileSecretMetadata {
    */
   public void setPasswordHash(String passwordHash) {
     this.passwordHash = passwordHash;
+  }
+
+  public byte[] getEncrypedMetadata() {
+    return encrypedMetadata;
+  }
+
+  public void setEncrypedMetadata(byte[] encrypedMetadata) {
+    this.encrypedMetadata = encrypedMetadata;
   }
 
 }

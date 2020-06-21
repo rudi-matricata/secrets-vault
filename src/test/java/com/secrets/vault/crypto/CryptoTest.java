@@ -4,6 +4,7 @@
 package com.secrets.vault.crypto;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,7 +13,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
-import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -30,13 +30,13 @@ import com.secrets.vault.exception.CryptoRuntimeException;
  */
 public class CryptoTest {
 
-  private static SecretsEncryptor secretsEncryptor;
-  private static SecretsDecryptor secretsDecryptor;
+  private static EncryptionManager secretsEncryptor;
+  private static DecryptionManager secretsDecryptor;
 
   @BeforeAll
   private static void initialize() throws NoSuchAlgorithmException, NoSuchPaddingException {
-    secretsEncryptor = new SecretsEncryptor();
-    secretsDecryptor = new SecretsDecryptor();
+    secretsEncryptor = new EncryptionManager();
+    secretsDecryptor = new DecryptionManager();
   }
 
   @Test
@@ -68,10 +68,10 @@ public class CryptoTest {
     secretsDecryptor.init("testpass", secretsEncryptor.getCipherIV());
 
     String plaintext = "secretvalue";
-    String base64EncodedCiphertext = secretsEncryptor.encrypt(plaintext.getBytes(UTF_8));
-    String resultAfterDecryption = secretsDecryptor.decrypt(Base64.getDecoder().decode(base64EncodedCiphertext));
+    byte[] ciphertext = secretsEncryptor.getCipher().doFinal(plaintext.getBytes(UTF_8));
+    byte[] resultAfterDecryption = secretsDecryptor.getCipher().doFinal(ciphertext);
 
-    assertEquals(plaintext, resultAfterDecryption, "Plaintext and decrypted value shoudl be the same");
+    assertArrayEquals(plaintext.getBytes(), resultAfterDecryption, "Plaintext and decrypted value should be the same");
   }
 
   @Test
@@ -82,8 +82,8 @@ public class CryptoTest {
     secretsDecryptor.init("testpass-different", secretsEncryptor.getCipherIV());
 
     String plaintext = "secretvalue";
-    String base64EncodedCiphertext = secretsEncryptor.encrypt(plaintext.getBytes(UTF_8));
-    assertThrows(BadPaddingException.class, () -> secretsDecryptor.decrypt(Base64.getDecoder().decode(base64EncodedCiphertext)),
+    byte[] ciphertext = secretsEncryptor.getCipher().doFinal(plaintext.getBytes(UTF_8));
+    assertThrows(BadPaddingException.class, () -> secretsDecryptor.getCipher().doFinal(ciphertext),
         "Trying to decrypt with another key generated (for symmetric encryption) should fail");
   }
 

@@ -3,28 +3,27 @@
  */
 package com.secrets.vault.crypto;
 
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.GCMParameterSpec;
 
 import com.secrets.vault.exception.CryptoRuntimeException;
 
 /**
- * Class used for AES decryption. Currently CBC mode with PKCS5Padding is used.
+ * Class used for AES decryption. Currently GCM mode with NoPadding is used.
  *
  * @author Filipov, Radoslav
  */
-public class SecretsDecryptor extends CryptoProvider {
+public class DecryptionManager extends CryptoProvider {
 
-  public SecretsDecryptor() throws NoSuchAlgorithmException, NoSuchPaddingException {
+  private static final int GCM_IV_LENGTH = 128;
+
+  public DecryptionManager() throws NoSuchAlgorithmException, NoSuchPaddingException {
     super();
   }
 
@@ -41,23 +40,10 @@ public class SecretsDecryptor extends CryptoProvider {
   public void init(String password, byte[] iv) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
     setSecretKey(password);
     try {
-      this.cipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
+      this.cipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(GCM_IV_LENGTH, iv));
     } catch (InvalidAlgorithmParameterException e) {
       throw new CryptoRuntimeException("Invalid IV parameter provided", e);
     }
-  }
-
-  /**
-   * Performs decryption.
-   *
-   * @param ciphertext
-   *          Ciphertext to be decrypted.
-   * @return Base64 encoded plaintext that corresponds to the given ciphertext.
-   * @throws IllegalBlockSizeException
-   * @throws BadPaddingException
-   */
-  public String decrypt(byte[] ciphertext) throws IllegalBlockSizeException, BadPaddingException {
-    return new String(cipher.doFinal(ciphertext), StandardCharsets.UTF_8);
   }
 
 }
